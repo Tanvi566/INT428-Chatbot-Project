@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Coding Mentor</title>
+</head>
+<body>
+
+<h2>AI Coding Mentor</h2>
+
+<input type="text" id="userInput" placeholder="Ask coding question">
+<button onclick="sendMessage()">Send</button>
+
+<p id="response"></p>
+
+<script>
+async function sendMessage() {
+    let message = document.getElementById("userInput").value;
+
+    let res = await fetch("/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: message })
+    });
+
+    let data = await res.json();
+    document.getElementById("response").innerText = data.reply;
+}
+</script>
+
+</body>
+</html>
