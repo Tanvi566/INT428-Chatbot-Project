@@ -5,6 +5,11 @@ import sqlite3
 
 app = FastAPI()
 
+# Request model
+class Question(BaseModel):
+    message: str
+
+# Login API
 @app.post("/login")
 def login(q: Question):
     username, password = q.message.split(",")
@@ -25,6 +30,7 @@ def login(q: Question):
     else:
         return {"message": "Invalid credentials"}
 
+# Signup API
 @app.post("/signup")
 def signup(q: Question):
     username, password = q.message.split(",")
@@ -44,6 +50,7 @@ def signup(q: Question):
     finally:
         conn.close()
 
+# Chat page route
 @app.get("/chat-page", response_class=HTMLResponse)
 def chat_page():
     with open("templates/chat.html") as f:
