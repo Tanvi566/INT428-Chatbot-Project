@@ -16,4 +16,3 @@ This project is a FastAPI-based AI chatbot designed to help users learn programm
 - AI API: Generative AI (OpenAI/Gemini)
 
 ## Status
-Development in progress
