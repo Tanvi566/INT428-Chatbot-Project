@@ -1,9 +1,11 @@
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
 import sqlite3
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Request model
 class Question(BaseModel):
