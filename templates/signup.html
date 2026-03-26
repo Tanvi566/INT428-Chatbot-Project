@@ -6,16 +6,17 @@
 </head>
 <body>
     <div class="container">
-    <h2>Signup Page</h2>
+        <h2>Signup</h2>
 
-    <input type="text" id="username" placeholder="Username"><br><br>
-    <input type="password" id="password" placeholder="Password"><br><br>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
 
-    <button onclick="signup()">Sign Up</button>
+        <button onclick="signup()">Sign Up</button>
 
-    <p id="result"></p>
+        <p id="result"></p>
 
-    <p>Already have an account? <a href="/login-page">Login</a></p>
+        <p>Already have an account? <a href="/login-page">Login</a></p>
+    </div>
 
     <script>
         async function signup() {
@@ -36,6 +37,5 @@
             document.getElementById("result").innerText = data.message;
         }
     </script>
-    </div>
 </body>
 </html>

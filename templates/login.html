@@ -6,16 +6,17 @@
 </head>
 <body>
     <div class="container">
-    <h2>Login Page</h2>
+        <h2>Login</h2>
 
-    <input type="text" id="username" placeholder="Username"><br><br>
-    <input type="password" id="password" placeholder="Password"><br><br>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
 
-    <button onclick="login()">Login</button>
+        <button onclick="login()">Login</button>
 
-    <p id="result"></p>
+        <p id="result"></p>
 
-    <p>Don't have an account? <a href="/signup-page">Sign up</a></p>
+        <p>Don't have an account? <a href="/signup-page">Sign up</a></p>
+    </div>
 
     <script>
         async function login() {
@@ -37,10 +38,10 @@
             document.getElementById("result").innerText = data.message;
 
             if (data.message === "Login successful") {
+                localStorage.setItem("username", username);
                 window.location.href = "/chat-page";
             }
         }
     </script>
-    </div>
 </body>
 </html>

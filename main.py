@@ -1,8 +1,10 @@
+from chatbot import get_response
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
 import sqlite3
+import database
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -50,10 +52,36 @@ def login(q: Question):
     conn.close()
 
     if user:
-        return {"message": "Login successful"}
+        return {"message": "Login successful", "username": username}
     else:
         return {"message": "Invalid credentials"}
 
+@app.post("/chat")
+def chat(q: Question):
+    full_message = q.message
+
+    # Extract username and actual message
+    try:
+        username, user_message = full_message.split(":", 1)
+    except:
+        return {"reply": "Invalid message format"}
+
+    from chatbot import get_response
+    reply = get_response(user_message)
+
+    # SAVE CHAT
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO chats (username, message, response) VALUES (?, ?, ?)",
+        (username, user_message, reply)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return {"reply": reply}
 
 # ------------------ PAGE ROUTES ------------------
 
@@ -69,10 +97,26 @@ def login_page():
         return f.read()
 
 
+from fastapi import Request
+from fastapi.templating import Jinja2Templates
+
+templates = Jinja2Templates(directory="templates")
+
 @app.get("/chat-page", response_class=HTMLResponse)
-def chat_page():
-    with open("templates/chat.html") as f:
-        return f.read()
+def chat_page(request: Request):
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+
+    # TEMP: show all chats (we'll filter later)
+    cursor.execute("SELECT message, response FROM chats")
+    chats = cursor.fetchall()
+
+    conn.close()
+
+    return templates.TemplateResponse("chat.html", {
+        "request": request,
+        "chats": chats
+    })
 
 
 # ------------------ ROOT ------------------
