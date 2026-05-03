@@ -1,18 +1,32 @@
-# INT428 Chatbot Project
+# 🎓 Student Academic Assistant
 
-## AI Coding Mentor Chatbot
-
-This project is a FastAPI-based AI chatbot designed to help users learn programming concepts, debug code, and generate coding examples using Generative AI APIs.
+An AI-powered chatbot designed to assist B.Tech students with academic queries using Google Gemini API.
 
 ## Features
-- Concept explanation (C++, Python, Java, etc.)
-- Code debugging assistance
-- Example generation
-- Beginner-friendly explanations
+- Domain-specific academic responses
+- Context-aware conversation
+- Controlled AI output using prompt engineering
+- Simple web interface using Streamlit
 
-## Technology Stack
-- Backend: FastAPI
-- Language: Python
-- AI API: Generative AI (OpenAI/Gemini)
+## Tech Stack
+- Python
+- Streamlit
+- Google Gemini API
 
-## Status
+## How to Run
+
+1. Install dependencies:
+   pip install -r requirements.txt
+
+2. Add API key in `.env` file:
+   GEMINI_API_KEY=your_key
+
+3. Run the app:
+   streamlit run app.py
+
+## Model Configuration
+- Temperature: 0.3
+- Top-p: 0.8
+
+## Author
+Tanvi (CSE)
