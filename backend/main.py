@@ -12,7 +12,7 @@ load_dotenv()
 
 app = FastAPI()
 
-# Enable CORS (so your frontend doesn't silently betray you)
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,10 +21,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load API key from .env
+# Load API key
 API_KEY = os.getenv("CHAT_API_KEY")
+print("Loaded API KEY:", API_KEY)
 
-print("Loaded API KEY:", API_KEY)  # Debug (optional)
+# 🧠 In-memory chat sessions
+chat_sessions = {}
 
 # Request schema
 class ChatRequest(BaseModel):
@@ -40,11 +42,38 @@ def verify_api_key(x_api_key: str):
 def chat(data: ChatRequest, x_api_key: str = Header(...)):
     verify_api_key(x_api_key)
 
-    # Debug logs (SAFE here)
+    session_id = x_api_key  # simple session handling
+
+    # Initialize session if not exists
+    if session_id not in chat_sessions:
+        chat_sessions[session_id] = []
+
+        # 👇 Add system prompt ONCE per session
+        chat_sessions[session_id].append({
+            "role": "system",
+            "content": build_prompt("You are initialized.")
+        })
+
+    # Add user message
+    chat_sessions[session_id].append({
+        "role": "user",
+        "content": data.query
+    })
+
     print("USER:", data.query)
 
-    prompt = build_prompt(data.query)
-    response = get_ai_response(prompt)
+    # Optional: limit history (prevents token explosion)
+    if len(chat_sessions[session_id]) > 12:
+        chat_sessions[session_id] = chat_sessions[session_id][-12:]
+
+    # Get AI response with full history
+    response = get_ai_response(chat_sessions[session_id])
+
+    # Add AI response to history
+    chat_sessions[session_id].append({
+        "role": "assistant",
+        "content": response
+    })
 
     print("AI:", response)
 

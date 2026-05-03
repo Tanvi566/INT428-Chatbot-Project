@@ -2,11 +2,12 @@ import requests
 import os
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-def get_ai_response(prompt: str):
+def get_ai_response(messages):
     url = "https://api.groq.com/openai/v1/chat/completions"
 
     headers = {
@@ -15,14 +16,15 @@ def get_ai_response(prompt: str):
     }
 
     data = {
-    "model": "llama-3.1-8b-instant",  # ✅ updated model
-    "messages": [{"role": "user", "content": prompt}],
-    "temperature": 0.3,
-    "max_tokens": 300
-}
+        "model": "llama-3.1-8b-instant",  # ✅ working model
+        "messages": messages,             # ✅ supports conversation memory
+        "temperature": 0.3,
+        "max_tokens": 300
+    }
 
     res = requests.post(url, headers=headers, json=data)
 
+    # Debug logs
     print("STATUS:", res.status_code)
     print("RESPONSE:", res.text)
 
