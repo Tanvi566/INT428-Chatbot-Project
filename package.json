@@ -1,0 +1,20 @@
+{
+  "name": "int428-chatbot-project",
+  "version": "1.0.0",
+  "description": "An AI-powered chatbot designed to assist B.Tech students with academic queries using Google Gemini API.",
+  "homepage": "https://github.com/Tanvi566/INT428-Chatbot-Project#readme",
+  "bugs": {
+    "url": "https://github.com/Tanvi566/INT428-Chatbot-Project/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tanvi566/INT428-Chatbot-Project.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
