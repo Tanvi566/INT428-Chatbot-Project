@@ -36,6 +36,7 @@ class QuizRequest(BaseModel):
     syllabus: str
     type: str
     level: str
+    num_questions: int = 5
     session_id: str
 
 class CodeRequest(BaseModel):
@@ -49,7 +50,7 @@ async def chat_endpoint(req: ChatRequest, x_api_key: str = Header(None)):
     api_key = x_api_key if x_api_key and x_api_key != "demo" else DEFAULT_GROQ_KEY
     
     if not api_key:
-        return {"response": "⚠️ **API Key Missing!** Please add your Groq API key in `main.py` (line 21) to make me hear you again."}
+        return {"response": "**API Key Missing!** Please add your Groq API key in `main.py` (line 21) to make me hear you again."}
     
     # Save user message to database
     add_message(req.session_id, "user", req.message)
@@ -85,9 +86,9 @@ async def quiz_endpoint(req: QuizRequest, x_api_key: str = Header(None)):
     api_key = x_api_key if x_api_key and x_api_key != "demo" else DEFAULT_GROQ_KEY
     
     if not api_key:
-        return {"response": "⚠️ **API Key Missing!** Add your key to generate quizzes."}
+        return {"response": "**API Key Missing!** Add your key to generate quizzes."}
 
-    prompt = f"Generate a {req.level} level {req.type} quiz for these topics: {req.syllabus}"
+    prompt = f"Generate a {req.level} level {req.type} quiz containing exactly {req.num_questions} questions for these topics: {req.syllabus}"
     messages = [
         {"role": "system", "content": QUIZ_SYSTEM_PROMPT},
         {"role": "user", "content": prompt}
@@ -101,7 +102,7 @@ async def code_endpoint(req: CodeRequest, x_api_key: str = Header(None)):
     api_key = x_api_key if x_api_key and x_api_key != "demo" else DEFAULT_GROQ_KEY
     
     if not api_key:
-        return {"response": "⚠️ **API Key Missing!** Add your key to generate code."}
+        return {"response": "**API Key Missing!** Add your key to generate code."}
 
     prompt = f"Language: {req.language}\n\nTask: {req.prompt}"
     messages = [
