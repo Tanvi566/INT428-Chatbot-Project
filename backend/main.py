@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -11,7 +12,12 @@ from groq_client import call_groq_api
 from prompts import ACADEMIC_SYSTEM_PROMPT, QUIZ_SYSTEM_PROMPT, CODE_SYSTEM_PROMPT
 from database import create_tables, add_message, get_session_messages, get_all_sessions
 
-app = FastAPI(title="Academic CS Assistant API (Groq Powered)")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_tables()
+    yield
+
+app = FastAPI(title="Academic CS Assistant API (Groq Powered)", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,10 +25,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.on_event("startup")
-def startup_event():
-    create_tables()
 
 # IMPORTANT: Paste your Groq API Key here (starts with gsk_...)
 DEFAULT_GROQ_KEY = os.environ.get("GROQ_API_KEY", "") 
