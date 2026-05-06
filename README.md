@@ -142,6 +142,7 @@ Ensure your latest changes are pushed to your GitHub repository.
 3.  Connect your GitHub repository.
 4.  **Configuration**:
     *   **Runtime**: `Python`
+    *   **Python Version**: `3.10.x` or `3.11.x` (Crucial for stability)
     *   **Build Command**: `pip install -r requirements.txt`
     *   **Start Command**: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
 5.  **Environment Variables**:
