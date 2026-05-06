@@ -129,6 +129,29 @@ Simply open `frontend/index.html` in your browser.
 *   **Mode Switching**: Switch to "Exam Practice" before tests for harder, assessment-style responses.
 *   **PDF Formatting**: Use the "PDF" button at the top right of each panel for a professional export.
 
+## 🌐 Deployment (Render)
+
+This project is configured for easy deployment on **Render**.
+
+### 1. Push to GitHub
+Ensure your latest changes are pushed to your GitHub repository.
+
+### 2. Create a Web Service on Render
+1.  Log in to [Render](https://render.com/).
+2.  Click **New +** and select **Web Service**.
+3.  Connect your GitHub repository.
+4.  **Configuration**:
+    *   **Runtime**: `Python`
+    *   **Build Command**: `pip install -r requirements.txt`
+    *   **Start Command**: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+5.  **Environment Variables**:
+    *   Add `GROQ_API_KEY` with your actual API key.
+    *   Add `PYTHON_VERSION` as `3.10.0` (optional).
+
+### 3. Database Note
+> [!IMPORTANT]
+> On Render's Free Tier, the SQLite database (`chats.db`) is **ephemeral**. Chat history will be cleared whenever the service restarts. For persistent storage, consider using Render's PostgreSQL or an external database.
+
 ---
 
 ## 👤 Author

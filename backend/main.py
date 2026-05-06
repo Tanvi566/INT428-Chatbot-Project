@@ -10,9 +10,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import the updated Groq client and prompts
-from groq_client import call_groq_api
-from prompts import ACADEMIC_SYSTEM_PROMPT, QUIZ_SYSTEM_PROMPT, CODE_SYSTEM_PROMPT
-from database import create_tables, add_message, get_session_messages, get_all_sessions
+try:
+    from groq_client import call_groq_api
+    from prompts import ACADEMIC_SYSTEM_PROMPT, QUIZ_SYSTEM_PROMPT, CODE_SYSTEM_PROMPT
+    from database import create_tables, add_message, get_session_messages, get_all_sessions
+except ImportError:
+    from backend.groq_client import call_groq_api
+    from backend.prompts import ACADEMIC_SYSTEM_PROMPT, QUIZ_SYSTEM_PROMPT, CODE_SYSTEM_PROMPT
+    from backend.database import create_tables, add_message, get_session_messages, get_all_sessions
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,12 +33,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Absolute path to the project root and frontend directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
+
 # Serve Frontend Files
-app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
 
 @app.get("/")
 async def read_index():
-    return FileResponse("frontend/index.html")
+    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 # IMPORTANT: Paste your Groq API Key here (starts with gsk_...)
 DEFAULT_GROQ_KEY = os.environ.get("GROQ_API_KEY", "") 
@@ -61,7 +71,7 @@ async def chat_endpoint(req: ChatRequest, x_api_key: str = Header(None)):
     api_key = x_api_key if x_api_key and x_api_key != "demo" else DEFAULT_GROQ_KEY
     
     if not api_key:
-        return {"response": "**API Key Missing!** Please add your Groq API key in `main.py` (line 21) to make me hear you again."}
+        return {"response": "**API Key Missing!** Please add your Groq API key in the environment variables (GROQ_API_KEY) or in `main.py`."}
     
     # Save user message to database
     add_message(req.session_id, "user", req.message)
@@ -126,5 +136,6 @@ async def code_endpoint(req: CodeRequest, x_api_key: str = Header(None)):
 
 if __name__ == "__main__":
     import uvicorn
-    # Make sure to run the script using: python main.py
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Use PORT environment variable if available (for Render/Heroku)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
